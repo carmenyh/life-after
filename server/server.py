@@ -1,32 +1,25 @@
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
-from optparse import OptionParser
 from database import registrationservice, notificationservice
 import json
 
 class RequestHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
-
         request_path = self.path
         if request_path == "/notifications":
-            # Send response with the notifications
+            # TODO Send response with the notifications
             notificationservice.notify(self.headers)
         print("\n----- Request Start ----->\n")
         print(request_path)
         print(self.headers)
         print("<----- Request End -----\n")
-
-        self.send_response(200)
-        self.send_header("Set-Cookie", "foo=bar")
+        self.send_response(418)
 
     def do_POST(self):
-
         request_path = self.path
-
         print("\n----- Request Start ----->\n")
         print(request_path)
         if request_path == "/register":
-            #
             print("Want to register something")
             request_headers = self.headers
             content_length = request_headers.getheaders('content-length')
@@ -41,16 +34,13 @@ class RequestHandler(BaseHTTPRequestHandler):
         print(request_headers)
         #print(self.rfile.read(length))
         print("<----- Request End -----\n")
-
+        # TODO send back token to be stored on the app
         self.send_response(200)
 
     do_PUT = do_POST
     do_DELETE = do_GET
 
 def main():
-    parser = OptionParser()
-    parser.usage = ("Creates an http-server that will echo out any GET or POST parameters\n")
-    (options, args) = parser.parse_args()
     port = 8080
     print('Listening on localhost:%s' % port)
     server = HTTPServer(('', port), RequestHandler)
